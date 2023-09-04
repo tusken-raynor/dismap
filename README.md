@@ -1,6 +1,6 @@
 # DisMap
 
-**Project Author:** (Sam Powell)[https://github.com/tusken-raynor]
+**Project Author:** [Sam Powell](https://github.com/tusken-raynor)
 
 DisMap is a web application that allows you to upload an image and distort it by manipulating points placed over the image as a grid. As you distort the image, it generates a displacement map that can be used in SVG filters for `feDisplacementMap`. This README provides instructions for setting up and using DisMap.
 
