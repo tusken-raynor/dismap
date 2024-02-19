@@ -11,20 +11,20 @@ import { NodeOffset } from "../types";
 import uvVertShader from "../assets/shaders/uv.vert.glsl?raw";
 import uvFragShader from "../assets/shaders/uv.frag.glsl?raw";
 
-const TEXTURE_LOADER: TextureLoader = new THREE.TextureLoader();
-const UV_MATERIAL = new THREE.ShaderMaterial({
+const TEXTURE_LOADER: TextureLoader = ('THREE' in window) ? new THREE.TextureLoader() : null as any;
+const UV_MATERIAL = ('THREE' in window) ? new THREE.ShaderMaterial({
   vertexShader: uvVertShader,
   fragmentShader: uvFragShader,
   side: THREE.DoubleSide,
   transparent: true,
-});
-const UV_RENDER_TARGET = new THREE.WebGLRenderTarget(1, 1, {
+}) : null as any;
+const UV_RENDER_TARGET = ('THREE' in window) ? new THREE.WebGLRenderTarget(1, 1, {
   minFilter: THREE.LinearFilter,
   magFilter: THREE.NearestFilter,
   format: THREE.RGBAFormat,
   type: THREE.UnsignedByteType,
   depthBuffer: false,
-});
+}) : null as any;
 
 let RENDERER: WebGLRenderer | null = null;
 let SCENE: Scene | null = null;
@@ -37,6 +37,7 @@ let BACKDROP: MeshBasicMaterial | null = null;
 
 const renderer = {
   initialze(mapWidth: number, mapHeight: number) {
+    if (!('THREE' in window)) return this;
     const halfMapWidth = mapWidth / 2;
     const halfMapHeight = mapHeight / 2;
 
@@ -84,6 +85,7 @@ const renderer = {
     offsets: Record<string, NodeOffset>,
     showWireframe: boolean
   ) {
+    if (!('THREE' in window)) return this;
     // Remove the old mesh from the scene
     if (RECTANGLE_MESH && SCENE) {
       SCENE.remove(RECTANGLE_MESH);
@@ -148,6 +150,7 @@ const renderer = {
     return this;
   },
   updateMaterial(imageData: ImageData | null) {
+    if (!('THREE' in window)) return this;
     // If the image data is null, create some blank data
     if (!imageData) {
       imageData = new ImageData(1, 1);
@@ -174,6 +177,7 @@ const renderer = {
     return this;
   },
   async updateBackdrop(backdropImageURL: string) {
+    if (!('THREE' in window)) return this;
     // Create a texture from the url
     const texture = await TEXTURE_LOADER.loadAsync(backdropImageURL);
     BACKDROP = new THREE.MeshBasicMaterial({
@@ -191,6 +195,7 @@ const renderer = {
     return this;
   },
   updateDimensions(mapWidth: number, mapHeight: number) {
+    if (!('THREE' in window)) return this;
     // Update the renderer size
     if (RENDERER) {
       RENDERER.setSize(mapWidth, mapHeight);
@@ -211,6 +216,7 @@ const renderer = {
     return this;
   },
   renderScene(parent?: Element) {
+    if (!('THREE' in window)) return this;
     if (!RENDERER || !SCENE || !CAMERA) {
       throw new Error("Renderer not initialized");
     }
@@ -234,6 +240,7 @@ const renderer = {
     return this;
   },
   renderUV() {
+    if (!('THREE' in window)) return new Uint8ClampedArray();
     if (!RENDERER || !SCENE || !CAMERA) {
       throw new Error("Renderer not initialized");
     }
@@ -298,6 +305,7 @@ const renderer = {
     return buffer;
   },
   setParent(parent: Element) {
+    if (!('THREE' in window)) return this;
     if (!RENDERER) {
       throw new Error("Renderer not initialized");
     }
@@ -305,6 +313,7 @@ const renderer = {
     return this;
   },
   async testUVBuffer(width: number, height: number) {
+    if (!('THREE' in window)) return;
     // Create a render target with the width and height of the map
     // const renderTarget = new THREE.WebGLRenderTarget(width, height);
     // Create a new renderer and scene to display a small 200 pixel square

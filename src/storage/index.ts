@@ -13,6 +13,7 @@ export default defineStorage({
     offsetDataUndos: "default",
     reflectX: "default",
     reflectY: "default",
+    mode: "default"
   },
   useStore(store) {
     const keys = Object.keys(this.watch) as Array<keyof typeof this.watch>;

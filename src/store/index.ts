@@ -4,7 +4,7 @@ import { createStore } from "vuex";
 import { setWorkHorseSize, workHorseCanvas, workHorseCtx } from "../workhorse";
 import storage from "../storage";
 import displacement from "../displacement";
-import { ModalData, NodeOffset, SavedOffsetStore } from "../types";
+import { DisplacementMode, ModalData, NodeOffset, SavedOffsetStore } from "../types";
 import renderer from "../renderer";
 import rendererWatch from "./renderer";
 import utils from "../utils";
@@ -13,14 +13,21 @@ import params from "../params";
 
 const undoLimit = params.isNumber("undoLimit") ? params.getNumber("undoLimit") : 10;
 
+// Set mode to storage
+if (params.has('mode')) {
+  storage.saveValue("mode", params.get("mode"));
+}
+
 const store = createStore({
   state: {
+    mode: (params.get('mode') || 'configurator') as DisplacementMode,
     mapWidth: 1350,
     mapHeight: 516,
     displayMesh: true,
     meshDensity: 20,
     scaleX: 1.0,
     scaleY: 1.0,
+    scale: 0,
     offsetData: {} as Record<string, NodeOffset>,
     tempOffsetsMesh3D: null as Record<string, NodeOffset> | null,
     offsetDataUndos: [] as Record<string, NodeOffset>[],
@@ -57,6 +64,9 @@ const store = createStore({
     },
     setScaleY(state, payload: number) {
       state.scaleY = payload;
+    },
+    setScale(state, payload: number) {
+      state.scale = payload;
     },
     setOffsetData(state, payload: Record<string, NodeOffset>) {
       state.offsetData = payload;

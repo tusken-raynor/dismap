@@ -11,3 +11,4 @@ export interface ModalData {
   props?: Record<string, any>;
   style?: Record<string, any>;
 }
+export type DisplacementMode = 'svg' | 'configurator';

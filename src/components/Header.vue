@@ -1,12 +1,15 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import { mapActions, mapMutations } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 import UploadBackdrop from "./UploadBackdrop.vue";
 import UploadDisplace from "./UploadDisplace.vue";
 
 export default defineComponent({
   name: "Header",
   components: { UploadBackdrop, UploadDisplace },
+  computed: {
+    ...mapState(['mode'])
+  },
   data() {
     return {
       menuOpen: false,
@@ -14,12 +17,13 @@ export default defineComponent({
       height: "0",
       scaleX: "1",
       scaleY: "1",
+      scale: "0",
       meshDensity: "20",
       closeMouseOver: false,
     };
   },
   methods: {
-    ...mapMutations(["setMapWidth", "setMapHeight", "setScaleX", "setScaleY", "setMeshDensity", "setModalData"]),
+    ...mapMutations(["setMapWidth", "setMapHeight", "setScaleX", "setScaleY", "setScale", "setMeshDensity", "setModalData"]),
     ...mapActions(["rememberMeshConfiguration", "resetMeshNodesOffsets"]),
     openMenu() {
       this.menuOpen = true;
@@ -38,6 +42,7 @@ export default defineComponent({
       this.setMapHeight(parseInt(this.height));
       this.setScaleX(parseFloat(this.scaleX));
       this.setScaleY(parseFloat(this.scaleY));
+      this.setScale(parseFloat(this.scale));
       this.setMeshDensity(parseInt(this.meshDensity));
       // Track the users mouse moved off the menu
       this.$refs.menuEl?.addEventListener("mouseleave", this.mouseOffMenu);
@@ -94,6 +99,7 @@ export default defineComponent({
     this.height = this.$store.state.mapHeight.toString();
     this.scaleX = this.$store.state.scaleX.toString();
     this.scaleY = this.$store.state.scaleY.toString();
+    this.scale = this.$store.state.scale.toString();
     this.meshDensity = this.$store.state.meshDensity.toString();
   }
 });
@@ -138,7 +144,21 @@ export default defineComponent({
             v-model="meshDensity"
           />
         </div>
-        <div class="input-wrap">
+        <template v-if="mode == 'svg'">
+          <div class="input-wrap">
+            <label for="scale">Scale</label>
+            <input
+              type="number"
+              name="scale"
+              id="scale"
+              min="0"
+              step="1"
+              v-model="scale"
+            />
+          </div>
+        </template>
+        <template v-else>
+          <div class="input-wrap">
           <label for="scale-x">Scale X</label>
           <input
             type="range"
@@ -164,6 +184,7 @@ export default defineComponent({
           />
           <span>&nbsp;{{ scaleY }}</span>
         </div>
+        </template>
         <div class="update-size-btn std-btn" @click="saveSettings">
           Save Settings
         </div>
